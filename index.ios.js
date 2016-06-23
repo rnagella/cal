@@ -1,13 +1,16 @@
 // import code
-var React = require('react-native');
-var {
-  AppRegistry,
-  StyleSheet,
-  View,
-  Text,
-  TouchableHighlight,
-  StatusBarIOS
-} = React;
+// Note: React now uses import
+import React from 'react';
+import {AppRegistry, StyleSheet, View, Text, TouchableHighlight, StatusBarIOS} from 'react-native';
+
+// var {
+//   AppRegistry,
+//   StyleSheet,
+//   View,
+//   Text,
+//   TouchableHighlight,
+//   StatusBarIOS
+// } = React;
 
 StatusBarIOS.setStyle(1);
 
@@ -271,7 +274,11 @@ var Cal = React.createClass({
         if (this.state.operation == 1) {
           memoryVal = eval(this.state.memory) * eval(this.state.current); 
         } else if (this.state.operation == 2) {
-          memoryVal = eval(this.state.memory) / eval(this.state.current); 
+          if (eval(this.state.current) === 0) {
+            memoryVal = 'Error'; 
+          } else {
+            memoryVal = eval(this.state.memory) / eval(this.state.current); 
+          }
         } else if (this.state.operation == 3) {
           memoryVal = eval(this.state.memory) + eval(this.state.current); 
         } else if (this.state.operation == 4) {
@@ -286,7 +293,12 @@ var Cal = React.createClass({
         if (this.state.operation == 1) {
           memoryVal = eval(this.state.memory) * eval(this.state.current); 
         } else if (this.state.operation == 2) {
-          memoryVal = eval(this.state.memory) / eval(this.state.current); 
+          if (eval(this.state.current) === 0) {
+            memoryVal = 'Error';
+          } else {
+            memoryVal = eval(this.state.memory) / eval(this.state.current);
+          }
+          
         } else if (this.state.operation == 3) {
           memoryVal = eval(this.state.memory) + eval(this.state.current); 
         } else if (this.state.operation == 4) {
@@ -310,11 +322,18 @@ var Cal = React.createClass({
       if (this.state.current == 'Aargh! Too long') {
         this.setState({
           lastCurrentvalue: 0,
-          current: 0
+          current: 0,
+          memory: 0
         });
+        // this.setState({
+        //     current: 0,
+        //     operation: 0,
+        //     memory: 0,
+        //     // isAC: true
+        //   });
       }
 
-      if (this.state.current == 'Infinity') {
+      if (this.state.current == 'Error') {
         this.setState({
           lastCurrentvalue: 0,
           current: 0,
@@ -334,7 +353,7 @@ var Cal = React.createClass({
           if (!this.state.isOperationSelected) {
             this.setState({
               lastCurrentvalue: this.state.current + dig.toString(),
-              current: this.state.current + dig.toString()
+              current: this.state.current == 'Aargh! Too long' ? dig.toString() : this.state.current + dig.toString()
             });
           } else {
             this.setState({
@@ -357,7 +376,20 @@ var Cal = React.createClass({
         if (this.state.operation == 1) {
           memoryVal = eval(this.state.memory) * eval(this.state.lastCurrentvalue); 
         } else if (this.state.operation == 2) {
-          memoryVal = eval(this.state.memory) / eval(this.state.lastCurrentvalue); 
+          if (eval(this.state.current) === 0) {
+            memoryVal = 'Error';
+          } else {
+            memoryVal = eval(this.state.memory) / eval(this.state.lastCurrentvalue); 
+          }
+
+          if (this.state.current == 'Error') {
+            this.setState({
+              lastCurrentvalue: 0,
+              current: 0,
+              memory: 0
+            });
+          }
+          
         } else if (this.state.operation == 3) {
           memoryVal = eval(this.state.memory) + eval(this.state.lastCurrentvalue); 
         } else if (this.state.operation == 4) {
@@ -430,7 +462,8 @@ var Cal = React.createClass({
         if (!this.state.isAC) {
           // clear current
           this.setState({
-            current: 0
+            current: 0,
+            isAC: true
           });
         } else {
           // clear everything
@@ -460,13 +493,14 @@ var styles = StyleSheet.create({
     flex: 2,
     justifyContent: 'flex-end',
     alignItems: 'flex-end',
-    backgroundColor: '#2C2C27'
+    backgroundColor: '#2C2C27',
   },
   resultText: {
     fontSize: 48,
     fontWeight: '300',
     color: '#EBEBEB',
-    right: 10
+    marginLeft: 10,
+    marginRight: 10
   },
   inputView: {
     flex: 5
